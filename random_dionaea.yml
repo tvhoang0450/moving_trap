@@ -1,0 +1,23 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - add_host:
+        name: "{{ item }}"
+        groups: limited_selection
+      loop:  "{{ (groups['servers'] | shuffle)[0:3] }}"
+- hosts: limited_selection
+  vars:
+     package: vim
+  tasks:
+     - name: Pull an image dionaea
+       community.general.docker_image:
+          name: tvh0711/opencanaryv2:latest
+          source: pull
+
+     - name: Restart a container dionaea
+       shell: |
+         docker run --rm -it -d -p 21:21 -p 42:42 -p 69:69/udp -p 80:80 -p 135:135 -p 443:443 -p 445:445 -p 1433:1433 -p 1723:1723 -p 1883:1883 -p 1900:1900/udp -p 3306:3306 -p 5060:5060 -p 5060:5060/udp -p 5061:5061 -p 11211:11211 tvh0711/dionaeav2:latest
+
+
+

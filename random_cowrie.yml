@@ -1,0 +1,15 @@
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - add_host:
+        name: "{{ item }}"
+        groups: limited_selection
+      loop:  "{{ (groups['servers'] | shuffle)[0:3] }}"
+- hosts: limited_selection
+  vars:
+     package: vim
+  tasks:
+     - name: Restart a container cowrie
+       shell: |
+         docker run -d -p 2222:2222 tvh0711/cowrie:latest
